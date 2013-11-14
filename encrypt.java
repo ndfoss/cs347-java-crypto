@@ -8,8 +8,8 @@ public class encrypt{
 *
 */
 
-	public encrypt(){
-		
-	}
-	
+        public encrypt(){
+                
+        }
+        
 }
