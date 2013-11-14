@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Crypto-Strength: unlimited
+Created-By: 1.6.0-rc (Sun Microsystems Inc.)
+
+Name: default_local.policy
+SHA1-Digest: +beVknwz6yLU+e2+9gIi2MjowbM=
+

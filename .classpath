@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="default_local.policy"/>
+	<classpathentry kind="lib" path="META-INF/JCE_RSA.RSA"/>
+	<classpathentry kind="lib" path="META-INF/JCE_RSA.SF"/>
+	<classpathentry kind="lib" path="META-INF/MANIFEST.MF"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
