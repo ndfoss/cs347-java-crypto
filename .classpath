@@ -2,9 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="default_local.policy"/>
-	<classpathentry kind="lib" path="META-INF/JCE_RSA.RSA"/>
-	<classpathentry kind="lib" path="META-INF/JCE_RSA.SF"/>
-	<classpathentry kind="lib" path="META-INF/MANIFEST.MF"/>
+	<classpathentry kind="lib" path="jce_policy-6/jce/local_policy.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
