@@ -1,4 +1,4 @@
-public class decrypt{
+public class Decrypt{
 /**
 *TODO
 *This class handles decryption of a file. When called, it should
@@ -8,7 +8,7 @@ public class decrypt{
 *
 */
 
-        public decrypt(){
+        public Decrypt(){
                 
         }
         

@@ -1,4 +1,4 @@
-public class encrypt{
+public class Encrypt{
 /**
 *TODO
 *This file handles encryption of the plaintext file. When called,
@@ -8,7 +8,7 @@ public class encrypt{
 *
 */
 
-        public encrypt(){
+        public Encrypt(){
                 
         }
         
