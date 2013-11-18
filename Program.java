@@ -33,11 +33,14 @@ public class Program extends JPanel{
 		final JButton encryptButton = new JButton("Encrypt");
 		encryptButton.addActionListener(new ActionListener() {
 			
-			//on submit, open the encryption by creating new encrypt() object
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				JFrame encryptFrame = new JFrame("Encrypt Homework File");
+				encryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				encryptFrame.getContentPane().add(new Encrypt());
+				encryptFrame.setPreferredSize(new Dimension(500,500));
+		        encryptFrame.pack();
+		        encryptFrame.setVisible(true);
 			}
 		});
 		final JLabel decryptLabel = new JLabel("Decrypt Submission");
@@ -48,7 +51,7 @@ public class Program extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame decryptFrame = new JFrame();
+				JFrame decryptFrame = new JFrame("Decrypt File Submission");
 				decryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				decryptFrame.getContentPane().add(new Decrypt());
 				decryptFrame.setPreferredSize(new Dimension(500,500));
