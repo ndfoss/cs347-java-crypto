@@ -7,7 +7,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -35,18 +35,30 @@ public class Decrypt extends JPanel{
 			try {
 
 				JPanel decryptForm = new JPanel(new GridLayout());
-				JFileChooser jfc = new JFileChooser();
+				JLabel label = new JLabel("Student's Public Key");
 				JTextField textField = new JTextField();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				        "TXT documents", "txt");
-				jfc.setFileFilter(filter);
-				int returnVal = jfc.showOpenDialog(getParent());
-			    if(returnVal == JFileChooser.APPROVE_OPTION){
-			    	File file = jfc.getSelectedFile();
-			    }
-			    else {
-			    	JOptionPane.showMessageDialog(null, "Please Choose a correct TXT file");
-			    }
+				final JTextField fileName = new JTextField();
+				fileName.setEditable(false);
+				JButton choose = new JButton("Choose File");
+				choose.addActionListener(new ActionListener() {
+					
+					@Override
+		            public void actionPerformed(ActionEvent e) {
+						JFileChooser jfc = new JFileChooser();
+						FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						        "TXT documents", "txt");
+						jfc.setFileFilter(filter);
+						int returnVal = jfc.showOpenDialog(getParent());
+					    if(returnVal == JFileChooser.APPROVE_OPTION){
+					    	File file = jfc.getSelectedFile();
+					    	fileName.setText(file.getName());
+					    }
+					    else {
+					    	JOptionPane.showMessageDialog(null, "Please Choose a correct TXT file");
+					    }
+					}
+				});
+				
 
 				JButton decryptButton = new JButton("Decrypt");
 				decryptButton.addActionListener(new ActionListener() {
@@ -58,8 +70,10 @@ public class Decrypt extends JPanel{
 				}
 			}); //end decryptButton actionListener
 				
-				decryptForm.add(jfc);
+				decryptForm.add(choose);
+				decryptForm.add(label);
 			    decryptForm.add(textField);
+			    decryptForm.add(fileName);
 			    decryptForm.add(decryptButton);
 				inputBox.add(decryptForm);
 				add(inputBox);
