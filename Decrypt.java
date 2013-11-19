@@ -70,22 +70,12 @@ public class Decrypt extends JPanel{
 				}
 			}); //end decryptButton actionListener
 				
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener() {
-					
-					@Override
-		            public void actionPerformed(ActionEvent e) {
-						//Close window and go back to home screen
-							
-					}
-				}); //end cancelButton actionListener
 				
 				decryptForm.add(choose);
 				decryptForm.add(label);
 			    decryptForm.add(textField);
 			    decryptForm.add(fileName);
 			    decryptForm.add(decryptButton);
-			    decryptForm.add(cancelButton);
 				inputBox.add(decryptForm);
 				add(inputBox);
         } //end try
