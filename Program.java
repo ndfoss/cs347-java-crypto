@@ -1,7 +1,6 @@
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -49,7 +48,7 @@ public class Program extends JFrame {
 		});
         
         JLabel keyLabel = new JLabel("Enter Encryption Key");
-        JTextField enterKey = new JTextField();
+        JTextField keyField = new JTextField();
         
         JLabel encryptLabel = new JLabel("Encrypt Submission");
         JLabel decryptLabel = new JLabel("Decrypt Submission");
@@ -82,9 +81,12 @@ public class Program extends JFrame {
         layout.setAutoCreateContainerGaps(true);
  
         layout.setHorizontalGroup(layout.createSequentialGroup()
+        	.addGroup(layout.createParallelGroup(LEADING)
             .addComponent(fileButton)
+            .addComponent(keyLabel))
             .addGroup(layout.createParallelGroup(LEADING)
                 .addComponent(textField)
+                .addComponent(keyField)
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(LEADING)
                         .addComponent(encryptLabel)
@@ -101,6 +103,9 @@ public class Program extends JFrame {
             .addGroup(layout.createParallelGroup(BASELINE)
                 .addComponent(fileButton)
                 .addComponent(textField))
+            .addGroup(layout.createParallelGroup(BASELINE)
+                .addComponent(keyLabel)
+                .addComponent(keyField))
             .addGroup(layout.createParallelGroup(LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(BASELINE)
