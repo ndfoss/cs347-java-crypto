@@ -1,16 +1,56 @@
-import java.awt.Component;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
-import javax.swing.*;
-
-import static javax.swing.GroupLayout.Alignment.*;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
  
 public class Program extends JFrame {
-    public Program() {
-        JButton fileButton = new JButton("Choose File:");;
-        JTextField textField = new JTextField();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7064260807681369346L;
+
+	public Program() {
+        JButton fileButton = new JButton("Choose File:");
+        final JTextField textField = new JTextField();
+        textField.setEditable(false);
+        
+        fileButton.addActionListener(new ActionListener() {
+			
+			@Override
+            public void actionPerformed(ActionEvent e) {
+				JFileChooser jfc = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				        "TXT documents", "txt");
+				jfc.setFileFilter(filter);
+				int returnVal = jfc.showOpenDialog(getParent());
+			    if(returnVal == JFileChooser.APPROVE_OPTION){
+			    	File file = jfc.getSelectedFile();
+			    	textField.setText(file.getName());
+			    }
+			    else {
+			    	JOptionPane.showMessageDialog(null, "Please Choose a correct TXT file");
+			    }
+			}
+		});
+        
+        JLabel keyLabel = new JLabel("Enter Encryption Key");
+        JTextField enterKey = new JTextField();
+        
         JLabel encryptLabel = new JLabel("Encrypt Submission");
         JLabel decryptLabel = new JLabel("Decrypt Submission");
         JButton encryptButton = new JButton("Encrypt");
@@ -18,12 +58,7 @@ public class Program extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame encryptFrame = new JFrame("Encrypt Homework File");
-				encryptFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				encryptFrame.getContentPane().add(new Encrypt());
-				encryptFrame.setPreferredSize(new Dimension(500,500));
-		        encryptFrame.pack();
-		        encryptFrame.setVisible(true);
+				//add encryption functionality
 			}
 		});
         
@@ -34,16 +69,13 @@ public class Program extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame decryptFrame = new JFrame("Decrypt File Submission");
-				decryptFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				decryptFrame.getContentPane().add(new Decrypt());
-				decryptFrame.setPreferredSize(new Dimension(500,500));
-		        decryptFrame.pack();
-		        decryptFrame.setVisible(true);
+				//add decryption functionality
 				
 			}
 		});
  
+        
+        
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setAutoCreateGaps(true);
