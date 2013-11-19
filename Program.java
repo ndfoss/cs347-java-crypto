@@ -1,37 +1,20 @@
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
-//This is the java file that will run the program
-/**
- * TODO
- * This file opens a window prompting the user to select 
- * whether they will encrypt a text file or decrypt one
- * 
- * Whichever button is clicked calls the corresponding class
- * with an action event handler
- */
-
-public class Program extends JPanel{
-	
-
-	private static final long serialVersionUID = -3117772857731837940L;
-	
-	public Program(){
-		final JPanel initialScreen = new JPanel(new GridLayout());
-		final Box selectBox = new Box(BoxLayout.Y_AXIS);
-		final JLabel encryptLabel = new JLabel("Encrypt Homework");
-
-		final JButton encryptButton = new JButton("Encrypt");
-		encryptButton.addActionListener(new ActionListener() {
+import static javax.swing.GroupLayout.Alignment.*;
+ 
+public class Program extends JFrame {
+    public Program() {
+        JButton fileButton = new JButton("Choose File:");;
+        JTextField textField = new JTextField();
+        JLabel encryptLabel = new JLabel("Encrypt Submission");
+        JLabel decryptLabel = new JLabel("Decrypt Submission");
+        JButton encryptButton = new JButton("Encrypt");
+        	encryptButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -40,12 +23,12 @@ public class Program extends JPanel{
 				encryptFrame.getContentPane().add(new Encrypt());
 				encryptFrame.setPreferredSize(new Dimension(500,500));
 		        encryptFrame.pack();
-		        encryptFrame.setVisible(true); 
+		        encryptFrame.setVisible(true);
 			}
 		});
-		final JLabel decryptLabel = new JLabel("Decrypt Submission");
-		final JButton decryptButton = new JButton("Decrypt");
-		decryptButton.addActionListener(new ActionListener() {
+        
+        JButton decryptButton = new JButton("Decrypt");
+        decryptButton.addActionListener(new ActionListener() {
 			
 			//on submit, open the decryption by creating new encrypt() object
 			
@@ -60,23 +43,61 @@ public class Program extends JPanel{
 				
 			}
 		});
-		
-		initialScreen.add(encryptLabel);
-		initialScreen.add(decryptLabel);
-		selectBox.add(encryptButton);
-		selectBox.add(decryptButton);
-		initialScreen.add(selectBox);
-		add(initialScreen);
-	}
-
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("Encryption");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(new Program());
-		frame.setPreferredSize(new Dimension(500,500));
-        frame.pack();
-        frame.setVisible(true);
-		
-		
-	}
+ 
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+ 
+        layout.setHorizontalGroup(layout.createSequentialGroup()
+            .addComponent(fileButton)
+            .addGroup(layout.createParallelGroup(LEADING)
+                .addComponent(textField)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(encryptLabel)
+                        .addComponent(encryptButton))
+                    .addGroup(layout.createParallelGroup(LEADING)
+                    	.addComponent(decryptLabel)
+                        .addComponent(decryptButton))))
+            .addGroup(layout.createParallelGroup(LEADING))
+        );
+        
+        layout.linkSize(SwingConstants.HORIZONTAL, encryptButton, decryptButton);
+ 
+        layout.setVerticalGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(BASELINE)
+                .addComponent(fileButton)
+                .addComponent(textField))
+            .addGroup(layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(encryptLabel)
+                        .addComponent(decryptLabel))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(encryptButton)
+                        .addComponent(decryptButton)))
+                .addComponent(decryptButton))
+        );
+ 
+        setTitle("Find");
+        pack();
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+     
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel(
+                                  "javax.swing.plaf.metal.MetalLookAndFeel");
+                                //  "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                                //UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                new Program().setVisible(true);
+            }
+        });
+    }
 }
