@@ -40,7 +40,7 @@ public class Program extends JPanel{
 				encryptFrame.getContentPane().add(new Encrypt());
 				encryptFrame.setPreferredSize(new Dimension(500,500));
 		        encryptFrame.pack();
-		        encryptFrame.setVisible(true);
+		        encryptFrame.setVisible(true); 
 			}
 		});
 		final JLabel decryptLabel = new JLabel("Decrypt Submission");
