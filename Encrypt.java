@@ -66,20 +66,31 @@ public class Encrypt extends JPanel{
 		            public void actionPerformed(ActionEvent e) {
 						//Encrypt file and open it
 							
-				}
-			}); //end decryptButton actionListener
+					}
+				}); //end encryptButton actionListener
+				
+				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					
+					@Override
+		            public void actionPerformed(ActionEvent e) {
+						//Close window and go back to home screen
+							
+					}
+				}); //end cancelButton actionListener
 				
 				encryptForm.add(choose);
 				encryptForm.add(label);
 			    encryptForm.add(textField);
 			    encryptForm.add(fileName);
 			    encryptForm.add(encryptButton);
+			    encryptForm.add(cancelButton);
 				inputBox.add(encryptForm);
 				add(inputBox);
-        } //end try
-		catch(Exception e){
-		    e.printStackTrace();
-	    } //end catch()    
-        }
+			} //end try
+			catch(Exception e){
+				e.printStackTrace();
+			} //end catch()    
+        }//end Encrypt() constructor
         
-}
+}//end class
