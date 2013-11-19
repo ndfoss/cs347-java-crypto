@@ -4,7 +4,14 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -16,6 +23,9 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
  
 public class Program extends JFrame {
     /**
@@ -47,8 +57,30 @@ public class Program extends JFrame {
 			}
 		});
         
-        JLabel keyLabel = new JLabel("Enter Encryption Key");
-        JTextField keyField = new JTextField();
+        JLabel keyLabel = new JLabel("Enter Key");
+        final JTextField keyField = new JTextField();
+        
+        JButton setKey = new JButton("Generate Key");
+        setKey.addActionListener(new ActionListener() {
+			
+			@Override
+            public void actionPerformed(ActionEvent e) {
+			    KeyPairGenerator keyGen = null;
+			    try { 
+			        keyGen = KeyPairGenerator.getInstance("RSA");
+			        keyGen.initialize(512);
+				    KeyPair key = keyGen.generateKeyPair();
+				    PrivateKey pk = key.getPrivate();
+
+					keyField.setText(pk.toString());
+					keyField.setEditable(false);
+			    }catch (NoSuchAlgorithmException e1){
+			    	e1.printStackTrace();
+			    }
+			}
+        });
+        
+        
         
         JLabel encryptLabel = new JLabel("Encrypt Submission");
         JLabel decryptLabel = new JLabel("Decrypt Submission");
@@ -57,7 +89,22 @@ public class Program extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//add encryption functionality
+				File plaintextFile = new File(textField.getText());
+				String stringKey = keyField.getText();
+				byte[] encodedKey;
+				try {
+					encodedKey = Base64.decode(stringKey);
+					SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
+					Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
+					encrypt.showFile();
+				} catch (Base64DecodingException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			    
 			}
 		});
         
@@ -83,6 +130,7 @@ public class Program extends JFrame {
         layout.setHorizontalGroup(layout.createSequentialGroup()
         	.addGroup(layout.createParallelGroup(LEADING)
             .addComponent(fileButton)
+            .addComponent(setKey)
             .addComponent(keyLabel))
             .addGroup(layout.createParallelGroup(LEADING)
                 .addComponent(textField)
@@ -104,6 +152,8 @@ public class Program extends JFrame {
                 .addComponent(fileButton)
                 .addComponent(textField))
             .addGroup(layout.createParallelGroup(BASELINE)
+                .addComponent(setKey))    
+            .addGroup(layout.createParallelGroup(BASELINE)
                 .addComponent(keyLabel)
                 .addComponent(keyField))
             .addGroup(layout.createParallelGroup(LEADING)
@@ -117,7 +167,7 @@ public class Program extends JFrame {
                 .addComponent(decryptButton))
         );
  
-        setTitle("Find");
+        setTitle("Secure Assignment Manager");
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
