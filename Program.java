@@ -36,7 +36,7 @@ public class Program extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame encryptFrame = new JFrame("Encrypt Homework File");
-				encryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				encryptFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				encryptFrame.getContentPane().add(new Encrypt());
 				encryptFrame.setPreferredSize(new Dimension(500,500));
 		        encryptFrame.pack();
@@ -52,7 +52,7 @@ public class Program extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame decryptFrame = new JFrame("Decrypt File Submission");
-				decryptFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				decryptFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				decryptFrame.getContentPane().add(new Decrypt());
 				decryptFrame.setPreferredSize(new Dimension(500,500));
 		        decryptFrame.pack();
