@@ -1,87 +1,129 @@
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
-public class Encrypt extends JPanel{
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4065927681564116356L;
 
+public class Encrypt{
+	File file;
 /**
 *TODO
 *This file handles encryption of the plaintext file. When called,
-*this class will open a window with a file chooser and a field
-*to take the user's key and will encrypt the file when the user 
-*hits submit. The encrypted contents will be written to a new file
+*this class will take in the character stream from the file, encrypt it,
+*and prompt the user to save the encrypted file.
+*@throws IOException
 *
 */
 
-        public Encrypt(){
-			Box inputBox = new Box(BoxLayout.Y_AXIS);
-			
-			try {
-
-				JPanel encryptForm = new JPanel(new GridLayout());
-				JLabel label = new JLabel("Enter Private Key");
-				JTextField textField = new JTextField();
-				final JTextField fileName = new JTextField();
-				fileName.setEditable(false);
-				JButton choose = new JButton("Choose File");
-				choose.addActionListener(new ActionListener() {
-					
-					@Override
-		            public void actionPerformed(ActionEvent e) {
-						JFileChooser jfc = new JFileChooser();
-						FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						        "TXT documents", "txt");
-						jfc.setFileFilter(filter);
-						int returnVal = jfc.showOpenDialog(getParent());
-					    if(returnVal == JFileChooser.APPROVE_OPTION){
-					    	File file = jfc.getSelectedFile();
-					    	fileName.setText(file.getName());
-					    }
-					    else {
-					    	JOptionPane.showMessageDialog(null, "Please Choose a correct TXT file");
-					    }
-					}
-				});
-				
-
-				JButton encryptButton = new JButton("Encrypt");
-				encryptButton.addActionListener(new ActionListener() {
-					
-					@Override
-		            public void actionPerformed(ActionEvent e) {
-						//Encrypt file and open it
-							
-					}
-				}); //end encryptButton actionListener
-				
-
-				
-				encryptForm.add(choose);
-				encryptForm.add(label);
-			    encryptForm.add(textField);
-			    encryptForm.add(fileName);
-			    encryptForm.add(encryptButton);
-				inputBox.add(encryptForm);
-				add(inputBox);
-			} //end try
-			catch(Exception e){
-				e.printStackTrace();
-			} //end catch()    
+        public Encrypt(File file, Key privateKey) throws IOException{
+        	
+        	try {
+					Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			    	String everything = getFileContents(file);
+			        String encryptedContent = doEncryption(everything, privateKey, rsaCipher);
+			        File result = writeToFile(encryptedContent);
+			        this.file = result;
+			     
+        	}catch(NoSuchAlgorithmException e){
+    			e.printStackTrace();
+    		}catch(NoSuchPaddingException e){
+    			e.printStackTrace();
+    		}
         }//end Encrypt() constructor
+        
+        private String getFileContents(File file){
+        	BufferedReader br;
+        	String everything = new String();
+			try {
+				br = new BufferedReader(new FileReader(file));
+	        	try {
+			        StringBuilder sb = new StringBuilder();
+			        String line = br.readLine();
+	
+			        while (line != null) {
+			            sb.append(line);
+			            sb.append("\n\n");
+			            line = br.readLine();
+			        }
+			        everything = sb.toString();
+	        	} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}finally {
+			        br.close();
+			    }
+		    }catch (IOException e){
+		    	e.printStackTrace();
+		    }
+        	return everything;
+        }//end getFileContents
+        
+        private String doEncryption(String everything, Key privateKey, Cipher rsaCipher){
+        	String encryptedContent = new String();
+        	try{
+	        	byte[] content = everything.getBytes();
+		        rsaCipher.init(Cipher.ENCRYPT_MODE, privateKey);
+		        byte[] textEncrypted = rsaCipher.doFinal(content);
+		        encryptedContent = textEncrypted.toString();
+		        
+        	} catch(InvalidKeyException e){
+    			e.printStackTrace();
+    		} catch(IllegalBlockSizeException e){
+    			e.printStackTrace();
+    		} catch(BadPaddingException e){
+    			e.printStackTrace();
+    		} 
+        	return encryptedContent;
+        }//end doEncryption
+        
+        private File writeToFile(String encryptedContent){
+        	BufferedWriter writer = null;
+        	File encryptedFile = new File("EncryptedAssignment.txt");
+	        try
+	        {
+	        	
+	        	writer = new BufferedWriter( new FileWriter(encryptedFile));
+	            writer.write(encryptedContent);
+	            
+
+	        }
+	        catch ( IOException e)
+	        {
+	        	e.printStackTrace();
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if ( writer != null)
+	                writer.close( );
+	            }
+	            catch ( IOException e)
+	            {
+	            	e.printStackTrace();
+	            }
+	        }
+			return encryptedFile;
+        }
+        
+        public void showFile(){
+        	try {
+				java.awt.Desktop.getDesktop().edit(this.file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
         
 }//end class
