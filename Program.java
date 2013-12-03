@@ -12,8 +12,6 @@ import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -104,6 +102,7 @@ public class Program extends JFrame {
 						String stringKey = keyField.getText();
 						byte[] encodedKey;
 						try {
+							com.sun.org.apache.xml.internal.security.Init.init();
 							encodedKey = Base64.decode(stringKey);
 							SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
 							Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
@@ -153,40 +152,40 @@ public class Program extends JFrame {
         layout.setAutoCreateContainerGaps(true);
  
         layout.setHorizontalGroup(layout.createSequentialGroup()
-        	.addGroup(layout.createParallelGroup(LEADING)
+        	.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(fileButton)
             .addComponent(setKey)
             .addComponent(keyLabel))
-            .addGroup(layout.createParallelGroup(LEADING)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(textField)
                 .addComponent(keyField)
                 .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(encryptLabel)
                         .addComponent(encryptButton))
-                    .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     	.addComponent(decryptLabel)
                         .addComponent(decryptButton))))
-            .addGroup(layout.createParallelGroup(LEADING))
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING))
         );
         
         layout.linkSize(SwingConstants.HORIZONTAL, encryptButton, decryptButton);
  
         layout.setVerticalGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(BASELINE)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(fileButton)
                 .addComponent(textField))
-            .addGroup(layout.createParallelGroup(BASELINE)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(setKey))    
-            .addGroup(layout.createParallelGroup(BASELINE)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(keyLabel)
                 .addComponent(keyField))
-            .addGroup(layout.createParallelGroup(LEADING)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(BASELINE)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(encryptLabel)
                         .addComponent(decryptLabel))
-                    .addGroup(layout.createParallelGroup(BASELINE)
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(encryptButton)
                         .addComponent(decryptButton)))
                 .addComponent(decryptButton))
