@@ -1,7 +1,10 @@
 Manifest-Version: 1.0
-Crypto-Strength: unlimited
-Created-By: 1.6.0-rc (Sun Microsystems Inc.)
+Ant-Version: Apache Ant 1.7.0
+Created-By: 1.4.2_17-b06 (Sun Microsystems Inc.)
+Built-By: mullan
 
-Name: default_local.policy
-SHA1-Digest: +beVknwz6yLU+e2+9gIi2MjowbM=
+Name: xmlsec
+Implementation-Title: Apache-XML-Security-J
+Implementation-Version: 1.4.3 July 21 2009
+Implementation-Vendor: Apache Software Foundation
 

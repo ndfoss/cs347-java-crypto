@@ -1,6 +1,3 @@
-import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.GroupLayout.Alignment.LEADING;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -9,10 +6,14 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,6 +27,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
+
+
  
 public class Program extends JFrame {
     /**
@@ -37,6 +40,16 @@ public class Program extends JFrame {
         JButton fileButton = new JButton("Choose File:");
         final JTextField textField = new JTextField();
         textField.setEditable(false);
+        JLabel keyLabel = new JLabel("Enter Key");
+        final JTextField keyField = new JTextField();
+        
+        JButton setKey = new JButton("Generate Key");
+        JLabel encryptLabel = new JLabel("Encrypt Submission");
+        JLabel decryptLabel = new JLabel("Decrypt Submission");
+        JButton encryptButton = new JButton("Encrypt");
+
+
+
         
         fileButton.addActionListener(new ActionListener() {
 			
@@ -57,10 +70,7 @@ public class Program extends JFrame {
 			}
 		});
         
-        JLabel keyLabel = new JLabel("Enter Key");
-        final JTextField keyField = new JTextField();
-        
-        JButton setKey = new JButton("Generate Key");
+
         setKey.addActionListener(new ActionListener() {
 			
 			@Override
@@ -81,41 +91,56 @@ public class Program extends JFrame {
         });
         
         
+        final ArrayList<JTextField> fieldList = new ArrayList<JTextField>();
+        fieldList.add(textField);
+        fieldList.add(keyField);
         
-        JLabel encryptLabel = new JLabel("Encrypt Submission");
-        JLabel decryptLabel = new JLabel("Decrypt Submission");
-        JButton encryptButton = new JButton("Encrypt");
         	encryptButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				File plaintextFile = new File(textField.getText());
-				String stringKey = keyField.getText();
-				byte[] encodedKey;
-				try {
-					encodedKey = Base64.decode(stringKey);
-					SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
-					Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
-					encrypt.showFile();
-				} catch (Base64DecodingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+        		
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(checkFields(fieldList)){
+						File plaintextFile = new File(textField.getText());
+						String stringKey = keyField.getText();
+						byte[] encodedKey;
+						try {
+							encodedKey = Base64.decode(stringKey);
+							SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
+							Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
+							encrypt.showFile();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (NullPointerException e1){
+							e1.printStackTrace();
+						} catch (Base64DecodingException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+				    
+					}else {
+	        			JOptionPane.showMessageDialog(null,
+	        					"Choose a File and Enter Security Keys");
+	        		}
 				}
-			    
-			}
-		});
+        		
+			});
         
         JButton decryptButton = new JButton("Decrypt");
+
         decryptButton.addActionListener(new ActionListener() {
 			
-			//on submit, open the decryption by creating new encrypt() object
+			//onclick, decrypt the file using the key
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(checkFields(fieldList)){
 				//add decryption functionality
+					
+				} else {
+					JOptionPane.showMessageDialog(null,
+        					"Choose a File and Enter Security Keys");
+				}
 				
 			}
 		});
@@ -171,6 +196,16 @@ public class Program extends JFrame {
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
+
+	private boolean checkFields(List<JTextField> fields) {
+		for (JTextField textField : fields) {
+			if (textField.getText().equals(null) || textField.getText().equals("")) {
+				return false;
+			}
+		}
+		return true;
+	}
+
      
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

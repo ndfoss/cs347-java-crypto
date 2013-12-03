@@ -29,9 +29,9 @@ public class Encrypt{
         public Encrypt(File file, Key privateKey) throws IOException{
         	
         	try {
-					Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+					Cipher RSACipher = Cipher.getInstance("RSA/CBC/PKCS5Padding");
 			    	String everything = getFileContents(file);
-			        String encryptedContent = doEncryption(everything, privateKey, rsaCipher);
+			        String encryptedContent = doEncryption(everything, privateKey, RSACipher);
 			        File result = writeToFile(encryptedContent);
 			        this.file = result;
 			     
@@ -69,12 +69,12 @@ public class Encrypt{
         	return everything;
         }//end getFileContents
         
-        private String doEncryption(String everything, Key privateKey, Cipher rsaCipher){
+        private String doEncryption(String everything, Key privateKey, Cipher RSACipher){
         	String encryptedContent = new String();
         	try{
 	        	byte[] content = everything.getBytes();
-		        rsaCipher.init(Cipher.ENCRYPT_MODE, privateKey);
-		        byte[] textEncrypted = rsaCipher.doFinal(content);
+		        RSACipher.init(Cipher.ENCRYPT_MODE, privateKey);
+		        byte[] textEncrypted = RSACipher.doFinal(content);
 		        encryptedContent = textEncrypted.toString();
 		        
         	} catch(InvalidKeyException e){
