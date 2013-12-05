@@ -104,7 +104,6 @@ public class Program extends JFrame {
 						String stringKey = keyField.getText();
 						byte[] encodedKey;
 						try {
-							com.sun.org.apache.xml.internal.security.Init.init();
 							encodedKey = stringKey.getBytes();
 							SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
 							Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
