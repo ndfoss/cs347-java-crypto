@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -22,9 +23,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 
  
@@ -75,12 +73,16 @@ public class Program extends JFrame {
             public void actionPerformed(ActionEvent e) {
 			    KeyPairGenerator keyGen = null;
 			    try { 
+			    	//Security.addProvider(new BouncyCastleProvider());
 			        keyGen = KeyPairGenerator.getInstance("RSA");
 			        keyGen.initialize(512);
 				    KeyPair key = keyGen.genKeyPair();
 				    PrivateKey pk = key.getPrivate();
 
-					keyField.setText(pk.toString());
+				    byte [] byteKey = pk.getEncoded();
+				    String encodedKey = byteKey.toString();
+				    
+					keyField.setText(encodedKey);
 					keyField.setEditable(false);
 			    }catch (NoSuchAlgorithmException e1){
 			    	e1.printStackTrace();
@@ -103,7 +105,7 @@ public class Program extends JFrame {
 						byte[] encodedKey;
 						try {
 							com.sun.org.apache.xml.internal.security.Init.init();
-							encodedKey = Base64.decode(stringKey);
+							encodedKey = stringKey.getBytes();
 							SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
 							Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
 							encrypt.showFile();
@@ -112,7 +114,7 @@ public class Program extends JFrame {
 							e1.printStackTrace();
 						} catch (NullPointerException e1){
 							e1.printStackTrace();
-						} catch (Base64DecodingException e1) {
+						} catch (InvalidKeyException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
