@@ -77,7 +77,7 @@ public class Program extends JFrame {
 			    try { 
 			        keyGen = KeyPairGenerator.getInstance("RSA");
 			        keyGen.initialize(512);
-				    KeyPair key = keyGen.generateKeyPair();
+				    KeyPair key = keyGen.genKeyPair();
 				    PrivateKey pk = key.getPrivate();
 
 					keyField.setText(pk.toString());
