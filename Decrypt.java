@@ -1,22 +1,25 @@
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Decrypt extends JPanel{
 /**
 	 * 
 	 */
+	File file;
 	private static final long serialVersionUID = -9127033735840882870L;
 
 /**
@@ -28,59 +31,145 @@ public class Decrypt extends JPanel{
 *
 */
 
-        public Decrypt(){
 
-			Box inputBox = new Box(BoxLayout.Y_AXIS);
-			
-			try {
+        		/**
+        		 * The constructor takes the file as a parameter and encrypts the content with private key using RSA 
+        		 *and writes the content to a new file
+        		 * 
+        		 * 
+        		 * @param file
+        		 * @param privateKey
+        		 * @throws IOException
+        		 */
 
-				JPanel decryptForm = new JPanel(new GridLayout());
-				JLabel label = new JLabel("Student's Public Key");
-				JTextField textField = new JTextField();
-				final JTextField fileName = new JTextField();
-				fileName.setEditable(false);
-				JButton choose = new JButton("Choose File");
-				choose.addActionListener(new ActionListener() {
-					
-					@Override
-		            public void actionPerformed(ActionEvent e) {
-						JFileChooser jfc = new JFileChooser();
-						FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						        "TXT documents", "txt");
-						jfc.setFileFilter(filter);
-						int returnVal = jfc.showOpenDialog(getParent());
-					    if(returnVal == JFileChooser.APPROVE_OPTION){
-					    	File file = jfc.getSelectedFile();
-					    	fileName.setText(file.getName());
-					    }
-					    else {
-					    	JOptionPane.showMessageDialog(null, "Please Choose a correct TXT file");
-					    }
-					}
-				});
+        	        public Decrypt(File file, Key privateKey) throws IOException, InvalidKeyException{
+        	        	
+        	        	try {
+        						Cipher RSACipher = Cipher.getInstance("RSA/ECB/PKCS5Padding");
+        						RSACipher.init(Cipher.DECRYPT_MODE, privateKey);
+        				    	String everything = getFileContents(file);
+        				        String encryptedContent = doEncryption(everything, privateKey, RSACipher);
+        				        File result = writeToFile(encryptedContent);
+        				        this.file = result;
+        				     
+        	        	}catch(NoSuchAlgorithmException e){
+        	    			e.printStackTrace();
+        	    		}catch(NoSuchPaddingException e){
+        	    			e.printStackTrace();
+        	    		}
+        	        }//end Decrypt() constructor
+        	        
+        	        /**
+        	         *The function reads the file contents and converts it to a string
+        	         * 
+        	         * @param file
+        	         * @return
+        	         */
+        	        
+        	        private String getFileContents(File file){
+        	        	BufferedReader br;
+        	        	String everything = new String();
+        				try {
+        					br = new BufferedReader(new FileReader(file));
+        		        	try {
+        				        StringBuilder sb = new StringBuilder();
+        				        String line = br.readLine();
+        		
+        				        while (line != null) {
+        				            sb.append(line);
+        				            sb.append("\n\n");
+        				            line = br.readLine();
+        				        }
+        				        everything = sb.toString();
+        		        	} catch (FileNotFoundException e1) {
+        						// TODO Auto-generated catch block
+        						e1.printStackTrace();
+        					}finally {
+        				        br.close();
+        				    }
+        			    }catch (IOException e){
+        			    	e.printStackTrace();
+        			    }
+        	        	return everything;
+        	        }//end getFileContents
+        	        
+        	        /**
+        	         * Encrypts the string using the cipher and private key
+        	         * 
+        	         * @param everything
+        	         * @param privateKey
+        	         * @param RSACipher
+        	         * @return
+        	         */
+        	        
+        	        private String doEncryption(String everything, Key privateKey, Cipher RSACipher){
+        	        	String encryptedContent = new String();
+        	        	try{
+        		        	byte[] content = everything.getBytes();
+        			        RSACipher.init(Cipher.ENCRYPT_MODE, privateKey);
+        			        byte[] textEncrypted = RSACipher.doFinal(content);
+        			        encryptedContent = textEncrypted.toString();
+        			        
+        	        	} catch(InvalidKeyException e){
+        	    			e.printStackTrace();
+        	    		} catch(IllegalBlockSizeException e){
+        	    			e.printStackTrace();
+        	    		} catch(BadPaddingException e){
+        	    			e.printStackTrace();
+        	    		} 
+        	        	return encryptedContent;
+        	        }//end doEncryption
+        	        
+        	        
+        	        /**
+        	         * Creates a new file containing the string specified as a parameter
+        	         * 
+        	         * @param encryptedContent
+        	         * @return
+        	         */
+        	        private File writeToFile(String encryptedContent){
+        	        	BufferedWriter writer = null;
+        	        	File encryptedFile = new File("EncryptedAssignment.txt");
+        		        try
+        		        {
+        		        	
+        		        	writer = new BufferedWriter( new FileWriter(encryptedFile));
+        		            writer.write(encryptedContent);
+        		            
+
+        		        }
+        		        catch ( IOException e)
+        		        {
+        		        	e.printStackTrace();
+        		        }
+        		        finally
+        		        {
+        		            try
+        		            {
+        		                if ( writer != null)
+        		                writer.close( );
+        		            }
+        		            catch ( IOException e)
+        		            {
+        		            	e.printStackTrace();
+        		            }
+        		        }
+        				return encryptedFile;
+        	        }
+        	        
+        	        /**
+        	         * Makes the file open
+        	         */
+        	        
+        	        public void showFile(){
+        	        	try {
+        					java.awt.Desktop.getDesktop().edit(this.file);
+        				} catch (IOException e) {
+        					// TODO Auto-generated catch block
+        					e.printStackTrace();
+        				}
+        	        }		
 				
 
-				JButton decryptButton = new JButton("Decrypt");
-				decryptButton.addActionListener(new ActionListener() {
-					
-					@Override
-		            public void actionPerformed(ActionEvent e) {
-						//decrypt file and open it
-							
-				}
-			}); //end decryptButton actionListener
-				
-				
-				decryptForm.add(choose);
-				decryptForm.add(label);
-			    decryptForm.add(textField);
-			    decryptForm.add(fileName);
-			    decryptForm.add(decryptButton);
-				inputBox.add(decryptForm);
-				add(inputBox);
-        } //end try
-		catch(Exception e){
-		    e.printStackTrace();
-	    } //end catch()
-     }//end Decrypt()
+        
   } //end class
