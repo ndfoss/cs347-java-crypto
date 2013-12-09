@@ -23,6 +23,7 @@ public class Encrypt{
 *this class will take in the character stream from the file, encrypt it,
 *and prompt the user to save the encrypted file.
 *@throws IOException
+ * @throws InvalidKeyException 
 *
 */
 	
@@ -37,10 +38,11 @@ public class Encrypt{
 	 * @throws IOException
 	 */
 
-        public Encrypt(File file, Key privateKey) throws IOException{
+        public Encrypt(File file, Key privateKey) throws IOException, InvalidKeyException{
         	
         	try {
-					Cipher RSACipher = Cipher.getInstance("RSA/CBC/PKCS5Padding");
+					Cipher RSACipher = Cipher.getInstance("RSA/ECB/PKCS5Padding");
+					RSACipher.init(Cipher.ENCRYPT_MODE, privateKey);
 			    	String everything = getFileContents(file);
 			        String encryptedContent = doEncryption(everything, privateKey, RSACipher);
 			        File result = writeToFile(encryptedContent);
