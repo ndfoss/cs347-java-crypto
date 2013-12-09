@@ -34,6 +34,13 @@ public class Program extends JFrame {
 	 */
 	private static final long serialVersionUID = -7064260807681369346L;
 
+	/**
+	 * Add the choose file, generate key, and encrypt buttons to the window
+	 * add text fields and labels to the window
+	 * add labels for the text fields
+	 * 
+	 */
+	
 	public Program() {
         JButton fileButton = new JButton("Choose File:");
         final JTextField textField = new JTextField();
@@ -47,7 +54,10 @@ public class Program extends JFrame {
         JButton encryptButton = new JButton("Encrypt");
 
 
-
+/*
+ * Allows for the user to choose a file to encrypt
+ * If the user does not choose a file, they will be prompted with an error message
+ */
         
         fileButton.addActionListener(new ActionListener() {
 			
@@ -144,7 +154,9 @@ public class Program extends JFrame {
 			}
 		});
  
-        
+        /**
+         * Created the layout of the window and adds all the buttons, labels, and text fields to it
+         */
         
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -195,7 +207,10 @@ public class Program extends JFrame {
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
-
+/**
+ * Checks to see if any of the textfields are blank
+ */
+	
 	private boolean checkFields(List<JTextField> fields) {
 		for (JTextField textField : fields) {
 			if (textField.getText().equals(null) || textField.getText().equals("")) {
@@ -206,14 +221,18 @@ public class Program extends JFrame {
 	}
 
      
+	/**
+	 * Changes how the window looks
+	 * 
+	 */
+	
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
                     UIManager.setLookAndFeel(
                                   "javax.swing.plaf.metal.MetalLookAndFeel");
-                                //  "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-                                //UIManager.getCrossPlatformLookAndFeelClassName());
+                            
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
