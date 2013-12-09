@@ -25,6 +25,17 @@ public class Encrypt{
 *@throws IOException
 *
 */
+	
+	
+	/**
+	 * The constructor takes the file as a parameter and encrypts the content with private key using RSA 
+	 *and writes the content to a new file
+	 * 
+	 * 
+	 * @param file
+	 * @param privateKey
+	 * @throws IOException
+	 */
 
         public Encrypt(File file, Key privateKey) throws IOException{
         	
@@ -41,6 +52,13 @@ public class Encrypt{
     			e.printStackTrace();
     		}
         }//end Encrypt() constructor
+        
+        /**
+         *The function reads the file contents and converts it to a string
+         * 
+         * @param file
+         * @return
+         */
         
         private String getFileContents(File file){
         	BufferedReader br;
@@ -69,6 +87,15 @@ public class Encrypt{
         	return everything;
         }//end getFileContents
         
+        /**
+         * Encrypts the string using the cipher and private key
+         * 
+         * @param everything
+         * @param privateKey
+         * @param RSACipher
+         * @return
+         */
+        
         private String doEncryption(String everything, Key privateKey, Cipher RSACipher){
         	String encryptedContent = new String();
         	try{
@@ -87,6 +114,13 @@ public class Encrypt{
         	return encryptedContent;
         }//end doEncryption
         
+        
+        /**
+         * Creates a new file containing the string specified as a parameter
+         * 
+         * @param encryptedContent
+         * @return
+         */
         private File writeToFile(String encryptedContent){
         	BufferedWriter writer = null;
         	File encryptedFile = new File("EncryptedAssignment.txt");
@@ -116,6 +150,10 @@ public class Encrypt{
 	        }
 			return encryptedFile;
         }
+        
+        /**
+         * Makes the file open
+         */
         
         public void showFile(){
         	try {
