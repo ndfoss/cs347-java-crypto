@@ -1,17 +1,24 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -40,19 +47,39 @@ public class Program extends JFrame {
 	 */
 	
 	public Program() {
-        JButton fileButton = new JButton("Choose File:");
+        JButton fileButton = new JButton("Choose Homework:");
         final JTextField textField = new JTextField();
         textField.setEditable(false);
-        JLabel keyLabel = new JLabel("Enter Key");
+
         final JTextField keyField = new JTextField();
+        keyField.setEditable(false);
         
         JButton setKey = new JButton("Generate Key");
         JLabel encryptLabel = new JLabel("Encrypt Submission");
         JLabel decryptLabel = new JLabel("Decrypt Submission");
         JButton encryptButton = new JButton("Encrypt");
+        JButton saveKeys = new JButton("Choose Key File:");
 
-
-/*
+        	saveKeys.addActionListener(new ActionListener() {
+			
+			@Override
+            public void actionPerformed(ActionEvent e) {
+				JFileChooser jfc = new JFileChooser("...\\cs347-java-crypto");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				        "KEY documents", "key");
+				jfc.setFileFilter(filter);
+				int returnVal = jfc.showOpenDialog(getParent());
+			    if(returnVal == JFileChooser.APPROVE_OPTION){
+			    	File file = jfc.getSelectedFile();
+			    	keyField.setText(file.getName());
+			    }
+			    else {
+			    	JOptionPane.showMessageDialog(null, "Please Choose a correct KEY file");
+			    }
+			}
+		});
+        
+/**
  * Allows for the user to choose a file to encrypt
  * If the user does not choose a file, they will be prompted with an error message
  */
@@ -76,6 +103,7 @@ public class Program extends JFrame {
 			}
 		});
         
+        
 
         setKey.addActionListener(new ActionListener() {
 			
@@ -83,22 +111,37 @@ public class Program extends JFrame {
             public void actionPerformed(ActionEvent e) {
 			    KeyPairGenerator keyGen = null;
 			    try { 
-			    	//Security.addProvider(new BouncyCastleProvider());
 			        keyGen = KeyPairGenerator.getInstance("RSA");
-			        keyGen.initialize(512);
+			        keyGen.initialize(1024);
 				    KeyPair key = keyGen.genKeyPair();
-				    PrivateKey pk = key.getPrivate();
 
-				    byte [] byteKey = pk.getEncoded();
-				    String encodedKey = byteKey.toString();
 				    
-					keyField.setText(encodedKey);
-					keyField.setEditable(false);
+				    KeyFactory fact = KeyFactory.getInstance("RSA");
+				    RSAPublicKeySpec pub = fact.getKeySpec(key.getPublic(),
+				      RSAPublicKeySpec.class);
+				    RSAPrivateKeySpec priv = fact.getKeySpec(key.getPrivate(),
+				      RSAPrivateKeySpec.class);
+
+				    saveToFile("public.key", pub.getModulus(),
+				      pub.getPublicExponent());
+				    saveToFile("private.key", priv.getModulus(),
+				      priv.getPrivateExponent());
+
+				    JOptionPane.showMessageDialog(null,
+				    		"Keys Created. Select the Key File");
+				    
 			    }catch (NoSuchAlgorithmException e1){
 			    	e1.printStackTrace();
-			    }
+			    } catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvalidKeySpecException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
         });
+        
         
         
         final ArrayList<JTextField> fieldList = new ArrayList<JTextField>();
@@ -110,13 +153,25 @@ public class Program extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(checkFields(fieldList)){
-						File plaintextFile = new File(textField.getText());
-						String stringKey = keyField.getText();
-						byte[] encodedKey;
 						try {
-							encodedKey = stringKey.getBytes();
-							SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "RSA"); //EDIT: missing 'new'
-							Encrypt encrypt = new Encrypt(plaintextFile, originalKey);
+						File plaintextFile = new File(textField.getText());
+						String keyFile = keyField.getText();
+						ArrayList<BigInteger> list = new ArrayList<BigInteger>();
+						
+						list = getParameters(keyFile);
+						
+						BigInteger mod = list.get(0);
+						BigInteger exponent = list.get(1);
+						RSAPublicKeySpec spec = new RSAPublicKeySpec(mod, exponent);
+						KeyFactory factory;
+						
+						factory = KeyFactory.getInstance("RSA");
+					
+						PublicKey pub;
+						
+							pub = factory.generatePublic(spec);
+						
+							Encrypt encrypt = new Encrypt(plaintextFile, pub);
 							encrypt.showFile();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
@@ -126,7 +181,14 @@ public class Program extends JFrame {
 						} catch (InvalidKeyException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
+						} catch (InvalidKeySpecException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						} catch (NoSuchAlgorithmException e3) {
+							// TODO Auto-generated catch block
+							e3.printStackTrace();
 						}
+						
 				    
 					}else {
 	        			JOptionPane.showMessageDialog(null,
@@ -145,7 +207,43 @@ public class Program extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(checkFields(fieldList)){
-				//add decryption functionality
+					try {
+						File cipherTextFile = new File(textField.getText());
+						String keyFile = keyField.getText();
+						ArrayList<BigInteger> list = new ArrayList<BigInteger>();
+						
+						list = getParameters(keyFile);
+						
+						BigInteger mod = list.get(0);
+						BigInteger exponent = list.get(1);
+						RSAPrivateKeySpec spec = new RSAPrivateKeySpec(mod, exponent);
+						KeyFactory factory;
+						
+						factory = KeyFactory.getInstance("RSA");
+					
+						PrivateKey priv;
+						
+							priv = factory.generatePrivate(spec);
+						
+							Decrypt decrypt = new Decrypt(cipherTextFile, priv);
+							decrypt.showFile();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (NullPointerException e1){
+							e1.printStackTrace();
+						} catch (InvalidKeyException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InvalidKeySpecException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						} catch (NoSuchAlgorithmException e3) {
+							// TODO Auto-generated catch block
+							e3.printStackTrace();
+						}
+						
+				    
 					
 				} else {
 					JOptionPane.showMessageDialog(null,
@@ -168,7 +266,7 @@ public class Program extends JFrame {
         	.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(fileButton)
             .addComponent(setKey)
-            .addComponent(keyLabel))
+            .addComponent(saveKeys))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(textField)
                 .addComponent(keyField)
@@ -191,7 +289,7 @@ public class Program extends JFrame {
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(setKey))    
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(keyLabel)
+                .addComponent(saveKeys)
                 .addComponent(keyField))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -208,10 +306,34 @@ public class Program extends JFrame {
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
-/**
- * Checks to see if any of the textfields are blank
- */
+
+	/**
+	 * This function writes BigIntegers to a file as Strings with the name specified
+	 * @param fileName
+	 * @param mod
+	 * @param exp
+	 * @throws IOException
+	 */
+	private void saveToFile(String fileName,
+			  BigInteger mod, BigInteger exp) throws IOException {
+			  PrintWriter pw = new PrintWriter(fileName);
+			  try {
+				String modString = mod.toString();
+				String expString = exp.toString();
+			    pw.println(modString);
+			    pw.println(expString);
+			  } catch (Exception e) {
+			    throw new IOException("Unexpected error", e);
+			  } finally {
+			    pw.close();
+			  }
+	}
 	
+	/**
+	 * This function checks the list of textfields for any that are empty
+	 * @param fields
+	 * @return
+	 */
 	private boolean checkFields(List<JTextField> fields) {
 		for (JTextField textField : fields) {
 			if (textField.getText().equals(null) || textField.getText().equals("")) {
@@ -220,6 +342,20 @@ public class Program extends JFrame {
 		}
 		return true;
 	}
+	
+	private ArrayList<BigInteger> getParameters(String file) throws IOException{
+		ArrayList<BigInteger> list = new ArrayList<BigInteger>();
+		BufferedReader reader = new BufferedReader( new FileReader (file));
+	    String         line = null;
+
+	    while( ( line = reader.readLine() ) != null ) {
+	        list.add(new BigInteger(line));
+	    }
+	    reader.close();
+
+	    return list;    
+	}
+
 
      
 	/**

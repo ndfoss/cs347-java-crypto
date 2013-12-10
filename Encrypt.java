@@ -41,7 +41,7 @@ public class Encrypt{
         public Encrypt(File file, Key privateKey) throws IOException, InvalidKeyException{
         	
         	try {
-					Cipher RSACipher = Cipher.getInstance("RSA/ECB/PKCS5Padding");
+					Cipher RSACipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 					RSACipher.init(Cipher.ENCRYPT_MODE, privateKey);
 			    	String everything = getFileContents(file);
 			        String encryptedContent = doEncryption(everything, privateKey, RSACipher);
