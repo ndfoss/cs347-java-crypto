@@ -302,7 +302,7 @@ public class Program extends JFrame {
                 .addComponent(decryptButton))
         );
  
-        setTitle("Secure Assignment Manager");
+        setTitle("Private Assignments");
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -332,7 +332,7 @@ public class Program extends JFrame {
 	/**
 	 * This function checks the list of textfields for any that are empty
 	 * @param fields
-	 * @return
+	 * @return boolean
 	 */
 	private boolean checkFields(List<JTextField> fields) {
 		for (JTextField textField : fields) {
@@ -343,6 +343,14 @@ public class Program extends JFrame {
 		return true;
 	}
 	
+	/**
+	 * Retrieves RSA encryption parameters from the specified file
+	 * 
+	 * @param file
+	 * @return ArrayList<BigInteger>
+	 * @throws IOException
+	 */
+			
 	private ArrayList<BigInteger> getParameters(String file) throws IOException{
 		ArrayList<BigInteger> list = new ArrayList<BigInteger>();
 		BufferedReader reader = new BufferedReader( new FileReader (file));
